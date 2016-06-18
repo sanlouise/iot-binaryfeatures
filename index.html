@@ -5,12 +5,84 @@
     <script src="utils.js" type="text/javascript"></script>
     <script>
     var element=new BFtObject();
+	var light = new BFtObject();
+
     $(function(){
-    element.start("172.16.27.18");
+		light.start('172.16.27.36');
+    	element.start("172.16.27.67");
     });
     </script>
   </head>
   <body>
     <button onclick="element.makeVibrate()">Make vibrate</button>
+	<script type="text/javascript">
+	function standardDeviation(values){
+	  var avg = average(values);
+
+	  var squareDiffs = values.map(function(value){
+	    var diff = value - avg;
+	    var sqrDiff = diff * diff;
+	    return sqrDiff;
+	  });
+
+	  var avgSquareDiff = average(squareDiffs);
+
+	  var stdDev = Math.sqrt(avgSquareDiff);
+	  return stdDev;
+	}
+
+	function average(data){
+	  var sum = data.reduce(function(sum, value){
+	    return sum + value;
+	  }, 0);
+
+	  var avg = sum / data.length;
+	  return avg;
+	}
+
+		function awaitStart() {
+			element.showImage("http://172.16.27.43:8091/skull_text.jpeg")
+			element.registerAudioJack()
+			element.playAudio(" ")
+			$(document).on('audioJackChanged', function() {
+				console.log('Registered audio check!')
+				start()
+			});
+		}
+
+		function start() {
+			element.registerMagnetometer()
+			light.setRelayEmbedded(0, 1)
+			element.playAudio("http://172.16.27.43:8091/thriller.mp3")
+
+			var array = [], i = 0, max = 10, stdDev, targetHit = 0;
+
+			$(document).on('magnetometerEvent', function(event, magnetoValues) {
+				array[(i++)%max] = parseFloat(magnetoValues.i);
+				stdDev = standardDeviation(array);
+				console.log(stdDev)
+			});
+
+			var interval = setInterval(function() {
+
+				if (stdDev > 8.0) {
+					targetHit++;
+				}
+
+				if (targetHit > (10 * 7 * 3)) {
+					console.log("Win!");
+					element.releaseMagnetometer();
+					turnAllTheLightsOn();
+					clearInterval(interval)
+				}
+			}, 100);
+
+
+		}
+
+		function turnAllTheLightsOn() {
+			light.setRelayEmbedded(0, 0)
+		}
+	</script>
   </body>
 </html>
