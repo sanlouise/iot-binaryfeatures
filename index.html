@@ -6,14 +6,17 @@
     <script>
     var element=new BFtObject();
 	var light = new BFtObject();
+	var strip = new BFtObject();
 
     $(function(){
 		light.start('172.16.27.36');
     	element.start("172.16.27.67");
+    	strip.start("172.16.27.34")
     });
     </script>
   </head>
   <body>
+
     <button onclick="element.makeVibrate()">Make vibrate</button>
 	<script type="text/javascript">
 	function standardDeviation(values){
@@ -40,10 +43,16 @@
 	  return avg;
 	}
 
+	function turnOnStrip() {
+		for (var i = 0; i < 255; i++ ) setTimeout(strip.setColorEmbedded.bind(strip, i, i, 255 - i, 0, 0.5), i * 500)
+	}
+
 		function awaitStart() {
-			element.showImage("http://172.16.27.43:8091/skull_text.jpeg")
+			element.showImage("http://172.16.27.43:8091/skull_text.jpg")
 			element.registerAudioJack()
+			turnOnStrip()
 			element.playAudio(" ")
+
 			$(document).on('audioJackChanged', function() {
 				console.log('Registered audio check!')
 				start()
@@ -88,7 +97,7 @@
 		}
 
 		function levelTwo() {
-
+			element.showImage("http://172.16.27.43:8091/tap.png")
 			var touched = 0
 			element.registerTouch();
 			$(document).on('touched', function (event, coordinates) {
