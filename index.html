@@ -17,7 +17,7 @@
   </head>
   <body>
 
-    <button onclick="element.makeVibrate()">Make vibrate</button>
+    <button onclick="awaitStart()">Start!</button>
 	<script type="text/javascript">
 	function standardDeviation(values){
 	  var avg = average(values);
@@ -58,18 +58,36 @@
 			turnOnStrip()
 			element.playAudio(" ")
 
-			$(document).on('audioJackChanged', function() {
-				console.log('Registered audio check!')
+			// $(document).on('audioJackChanged', function() {
+				// console.log('Registered audio check!')
+			setTimeout(function(){
 				start()
 			});
 		}
 
 		function start() {
 			element.registerMagnetometer()
-			light.setRelayEmbedded(0, 1)
-			light.setRelayEmbedded(1, 1)
+			setTimeout(
+				function() {
+					light.setRelayEmbedded(0, 1)
+				},
+				100
+			)
 
-			element.playAudio("http://172.16.27.43:8091/thriller.mp3")
+			setTimeout(
+				function() {
+					light.setRelayEmbedded(1, 1)
+				},
+				200
+			)
+
+			setTimeout(
+				function() {
+					element.playAudio("http://172.16.27.43:8091/thriller.mp3")
+				},
+				100
+			)
+
 
 			var array = [], i = 0, max = 10, stdDev, targetHit = 0;
 
@@ -112,6 +130,7 @@
 				if (touched > 5) {
 					console.log('Touched 6 times!')
 					light.setRelayEmbedded(1, 0);
+					element.showImage("http://172.16.27.43:8091/winnerrrr.png")
 				}
 			})
 		}
