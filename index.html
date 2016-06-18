@@ -53,6 +53,8 @@
 		function start() {
 			element.registerMagnetometer()
 			light.setRelayEmbedded(0, 1)
+			light.setRelayEmbedded(1, 1)
+
 			element.playAudio("http://172.16.27.43:8091/thriller.mp3")
 
 			var array = [], i = 0, max = 10, stdDev, targetHit = 0;
@@ -69,10 +71,11 @@
 					targetHit++;
 				}
 
-				if (targetHit > (10 * 7 * 3)) {
+				if (targetHit > (10 * 1 * 3)) {
 					console.log("Win!");
 					element.releaseMagnetometer();
 					turnAllTheLightsOn();
+					levelTwo();
 					clearInterval(interval)
 				}
 			}, 100);
@@ -82,6 +85,20 @@
 
 		function turnAllTheLightsOn() {
 			light.setRelayEmbedded(0, 0)
+		}
+
+		function levelTwo() {
+
+			var touched = 0
+			element.registerTouch();
+			$(document).on('touched', function (event, coordinates) {
+				console.log('Touched');
+				touched++
+				if (touched > 5) {
+					console.log('Touched 6 times!')
+					light.setRelayEmbedded(1, 0);
+				}
+			})
 		}
 	</script>
   </body>

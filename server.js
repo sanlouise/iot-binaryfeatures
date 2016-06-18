@@ -3,7 +3,7 @@ var express = require('express');
 var app = express();
 app.use(express.static(__dirname + ''));
 
-http.listen(PORT, function() {
+app.listen(PORT, function() {
 	console.log('Server started!');
 });
 
